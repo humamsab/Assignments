@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auth + Todo App</title>
+</head>
+<body>
+  <h1>Auth + Todo App</h1>
+
+  <h2>Signup</h2>
+  <input id="signup-username" placeholder="username">
+  <input id="signup-password" type="password" placeholder="password">
+  <button onclick="signup()">Signup</button>
+
+  <h2>Signin</h2>
+  <input id="signin-username" placeholder="username">
+  <input id="signin-password" type="password" placeholder="password">
+  <button onclick="signin()">Signin</button>
+
+  <h2>Add Todo</h2>
+  <input id="todo-input" placeholder="Enter todo">
+  <button onclick="addTodo()">Add</button>
+
+  <h2>Your Todos</h2>
+  <ul id="todo-list"></ul>
+
+  <script>
+    let token = localStorage.getItem("token") || "";
+
+    async function signup() {
+      const username = document.getElementById("signup-username").value;
+      const password = document.getElementById("signup-password").value;
+
+      const res = await fetch("http://localhost:3000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      alert(data.msg || "Signup complete!");
+    }
+
+    async function signin() {
+      const username = document.getElementById("signin-username").value;
+      const password = document.getElementById("signin-password").value;
+
+      const res = await fetch("http://localhost:3000/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        localStorage.setItem("token", token);
+        alert("Signed in!");
+        getTodos();
+      } else {
+        alert(data.msg || "Signin failed");
+      }
+    }
+
+    async function addTodo() {
+      const todo = document.getElementById("todo-input").value;
+
+      const res = await fetch("http://localhost:3000/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ title: todo }) // ✅ send title instead of todo
+      });
+
+      const data = await res.json();
+      alert(data.msg || "Todo added!");
+      getTodos();
+    }
+
+    async function getTodos() {
+      const res = await fetch("http://localhost:3000/todos", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const data = await res.json();
+      const list = document.getElementById("todo-list");
+      list.innerHTML = "";
+
+      // ✅ loop directly over data array
+      data.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t.title;
+        list.appendChild(li);
+      });
+    }
+
+    // auto-load todos if already signed in
+    if (token) {
+      getTodos();
+    }
+  </script>
+</body>
+</html>
