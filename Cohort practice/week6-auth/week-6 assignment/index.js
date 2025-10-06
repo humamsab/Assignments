@@ -13,23 +13,23 @@ app.use(express.static("frontend"));
 
 const TODO_FILE = "todos.json";
 const USER_FILE = "users.json";
-const SECRET = "supersecret"; // in real apps, use env vars
+const SECRET = "supersecret"; 
 
 const path = require("path");
 
-// Serve index.html
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
 
-// Helper: read/write JSON
+
 const readData = (file) => fs.existsSync(file) ? JSON.parse(fs.readFileSync(file)) : [];
 const writeData = (file, data) => fs.writeFileSync(file, JSON.stringify(data, null, 2));
 
-/* ===================== AUTH ROUTES ===================== */
 
-// Signup
+
+
 app.post("/signup", async (req, res) => {
   const { username, password } = req.body;
   let users = readData(USER_FILE);
@@ -45,7 +45,7 @@ app.post("/signup", async (req, res) => {
   res.status(201).json({ message: "Signup successful" });
 });
 
-// Signin
+
 app.post("/signin", async (req, res) => {
   const { username, password } = req.body;
   let users = readData(USER_FILE);
@@ -60,7 +60,7 @@ app.post("/signin", async (req, res) => {
   res.json({ token });
 });
 
-// Middleware: verify token
+
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ message: "No token provided" });
@@ -75,14 +75,14 @@ const authMiddleware = (req, res, next) => {
 };
 
 
-// GET todos (for logged-in user)
+
 app.get("/todos", authMiddleware, (req, res) => {
   let todos = readData(TODO_FILE);
   let userTodos = todos.filter(t => t.username === req.user.username);
   res.json(userTodos);
 });
 
-// POST new todo
+
 app.post("/todos", authMiddleware, (req, res) => {
   let todos = readData(TODO_FILE);
   const id = todos.length ? todos[todos.length - 1].id + 1 : 1;
@@ -94,7 +94,7 @@ app.post("/todos", authMiddleware, (req, res) => {
   res.status(201).json(newTodo);
 });
 
-// PUT update todo
+
 app.put("/todos/:id", authMiddleware, (req, res) => {
   let todos = readData(TODO_FILE);
   const todo = todos.find(t => t.id == req.params.id && t.username === req.user.username);
@@ -107,7 +107,7 @@ app.put("/todos/:id", authMiddleware, (req, res) => {
   res.json(todo);
 });
 
-// DELETE todo
+
 app.delete("/todos/:id", authMiddleware, (req, res) => {
   let todos = readData(TODO_FILE);
   const newTodos = todos.filter(t => !(t.id == req.params.id && t.username === req.user.username));
