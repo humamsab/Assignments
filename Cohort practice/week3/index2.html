@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttons in a Box</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body spans the full viewport height */
+        }
+
+        .box {
+            margin-top: auto; /* Push the box to the bottom of the body */
+            display: flex;
+            justify-content: center; /* Center the buttons inside the box horizontally */
+            align-items: center; /* Center the buttons inside the box vertically */
+            gap: 10px; /* Add spacing between buttons */
+            padding: 20px; /* Add space inside the box around the buttons */
+            background-color: lightgray; /* Background color for the box */
+            border: 2px solid gray; /* Optional border for the box */
+            border-radius: 10px; /* Rounded corners for the box */
+            width: 90%; /* Optional: Adjust the width of the box */
+            max-width: 600px; /* Optional: Limit the box width */
+            margin-left: auto; /* Center the box horizontally */
+            margin-right: auto; /* Center the box horizontally */
+            margin-bottom: 20px; /* Space from the bottom of the viewport */
+        }
+
+        button {
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <button>Red</button>
+        <button>Yellow</button>
+        <button>Black</button>
+        <button>Purple</button>
+        <button>Green</button>
+        <button>Blue</button>
+        <button>Default</button>
+    </div>
+</body>
+</html>
